@@ -1,0 +1,54 @@
+typedef struct VariableDetails {
+    size_t offset;
+    size_t size;
+} VariableDetails;
+
+typedef struct FunctionParams {
+    size_t offset;
+    size_t size;
+} FunctionParams;
+
+typedef struct FunctionDetails {
+    size_t code_offset;
+    size_t return_size;
+    FunctionParams *params;
+    size_t param_count;
+} FunctionDetails;
+
+typedef struct StructMembers {
+    size_t offset;
+    size_t size;
+} StructMembers;
+
+typedef struct StructDetails {
+    StructMembers *members;
+    size_t member_count;
+    size_t total_size;
+} StructDetails;
+
+typedef struct EnumMembers {
+    size_t symbol_id;
+    int64_t value;
+} EnumMembers;
+
+typedef struct EnumDetails {
+    EnumMembers *members;
+    size_t member_count;
+} EnumDetails;
+
+
+typedef struct UnionMembers {
+    size_t offset;
+    size_t size;
+} UnionMembers;
+
+typedef struct UnionDetails {
+    UnionMembers *members;
+    size_t member_count;
+    size_t total_size;
+} UnionDetails;
+
+typedef struct TypeAliasDetails {
+    size_t aliased_symbol_id;
+    size_t size;
+} TypeAliasDetails;

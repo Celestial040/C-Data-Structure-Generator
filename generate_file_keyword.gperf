@@ -1,0 +1,16 @@
+%{
+#include <string.h>
+%}
+%struct-type
+struct GenKeyMapping { const char *name; int id; };
+%%
+status_header,   0
+utils_dir,       1
+header_dir,      2
+struct_template, 3
+%%
+#undef TOTAL_KEYWORDS
+#undef MIN_WORD_LENGTH
+#undef MAX_WORD_LENGTH
+#undef MIN_HASH_VALUE
+#undef MAX_HASH_VALUE

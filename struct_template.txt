@@ -1,0 +1,7 @@
+{data_structure = 1, base_name = "variable_details", type = "VariableDetails"}
+(
+    typedef struct VariableDetails {
+        size_t offset;
+        size_t size;
+    } VariableDetails;
+)

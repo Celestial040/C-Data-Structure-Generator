@@ -1,0 +1,15 @@
+%{
+#include <string.h>
+%}
+%struct-type
+struct TemplateKeyMapping { const char *name; int id; };
+%%
+data_structure,0
+base_name,1
+type,2
+%%
+#undef TOTAL_KEYWORDS
+#undef MIN_WORD_LENGTH
+#undef MAX_WORD_LENGTH
+#undef MIN_HASH_VALUE
+#undef MAX_HASH_VALUE

@@ -6,7 +6,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "lookup.h"
+#include "struct_template_keyword.h"
+#include "generate_file_keyword.h"
 #include "char_manip.h"
 #include "string_dynamic_array.h"
 
@@ -193,6 +194,7 @@ Status parser_start() {
     Token current_token = TOKEN_UNKNOWN;
     size_t path_pointer, path_length;
     uint8_t i;
+    Status file_opening_status;
 
     for (i = 0; i<4; i++) {
         current_token = lexer_linear_scan();
@@ -266,9 +268,14 @@ Status parser_start() {
         reset_tail_mode();
     }
 
-    for (i = 0; i<4; i++) {
-        printf("%*s\n",targets_dir[i].string_length, string_dynamic_array->start_pointer + targets_dir[i].string_start);
+    file_opening_status = read_file(string_dynamic_array->start_pointer + targets_dir[3].string_start, file_string);
+    if (file_opening_status != NO_ERROR) {
+        printf("Error opening %s due to:\n", target_dir_fields_name[3]);
+        return file_opening_status;
     }
+
+
+
 
     return NO_ERROR;
 }
