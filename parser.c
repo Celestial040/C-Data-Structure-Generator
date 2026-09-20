@@ -1,3 +1,4 @@
+#include "bool.h"
 #include "file_loader.h"
 #include "status.h"
 #include <stddef.h>
@@ -31,7 +32,7 @@ TypeMode type_check(const char target) {
     if (target == 34) {
         return STRING_LITERAL;
     }
-    else if (is_alphabet_numeric(target) || target == 95) {
+    else if (is_alphabet_numeric(target) || target == 95 || target == 46 || target == 47) {
         return ALPHANUMERIC;
     } else if (is_whitespace(target)) {
         return WHITESPACE;
@@ -182,20 +183,106 @@ Status parser_start() {
     }
 
     reset_tail_mode();
+
     temp_head = head;
 
-    scan_status = move_head_forward_until('=');
 
-    printf("%ld\n", head);
+    while (head < file_string->length) {
+        if (file_string->start[head] == '=') {
+            scan_status = ITEM_FOUND;
+            break;
+        }
+        if (type_check(file_string->start[head]) == ALPHANUMERIC ) {
+            scan_status = ITEM_NOT_FOUND;
+            break;
+        }
+        head++;
+    }
 
     if (scan_status == ITEM_NOT_FOUND) {
         head = temp_head;
         printf("Missing assignment at:\n");
         get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"./include/status\";");
+        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
     }
 
+    reset_tail_mode();
 
+    temp_head = head;
+
+
+    while (head < file_string->length) {
+        if (file_string->start[head] == '"') {
+            scan_status = ITEM_FOUND;
+            break;
+        }
+        if (type_check(file_string->start[head]) == ALPHANUMERIC ) {
+            scan_status = ITEM_NOT_FOUND;
+            break;
+        }
+        head++;
+    }
+
+    if (scan_status == ITEM_NOT_FOUND) {
+        head = temp_head;
+        printf("Missing double quote at:\n");
+        get_one_line_error_print();
+        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
+    }
+
+    reset_tail_mode();
+    head++;
+
+    while (head < file_string->length) {
+        if (file_string->start[head] == '"') {
+            scan_status = ITEM_FOUND;
+            break;
+        }
+        if (type_check(file_string->start[head]) != ALPHANUMERIC || file_string->start[head] == '\n' || file_string->start[head] == ';') {
+            scan_status = ITEM_NOT_FOUND;
+            break;
+        }
+        head++;
+    }
+
+    while (head > tail) {
+        if (file_string->start[head] == '"') {
+            scan_status = ITEM_FOUND;
+            break;
+        }
+        head--;
+    }
+
+    if (scan_status == ITEM_NOT_FOUND) {
+        head = temp_head;
+        printf("Missing double quote at:\n");
+        get_one_line_error_print();
+        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
+    }
+
+    temp_head = head;
+
+    while (head < file_string->length) {
+        if (file_string->start[head] == ';') {
+            scan_status = ITEM_FOUND;
+            break;
+        }
+        if (type_check(file_string->start[head]) == ALPHANUMERIC || file_string->start[head] == '\n') {
+            scan_status = ITEM_NOT_FOUND;
+            break;
+        }
+        head++;
+    }
+
+    if (scan_status == ITEM_NOT_FOUND) {
+        head = temp_head;
+        printf("Missing semicolon at the end\n");
+        get_one_line_error_print();
+        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
+    }
+
+    header_dir = insert_string(string_dynamic_array, file_string->start + tail, head-tail);
+    printf("%s \n", string_dynamic_array->start_pointer + header_dir.string_start);
 
 
     return NO_ERROR;

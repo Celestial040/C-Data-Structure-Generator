@@ -1,4 +1,4 @@
-status_header  "./include/status";
+status_header = "./include/status";
 utils_dir = "./utils/dynamic_array";
 header_dir = "./include/dynamic_array";
 struct_template = "./struct_template.txt";
