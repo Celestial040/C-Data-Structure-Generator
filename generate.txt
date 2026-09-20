@@ -1,0 +1,5 @@
+data_structure = 1;
+target_type = "int";
+path_for_header = "include"
+path_for_
+path_to_status_header = "include/status.h";
