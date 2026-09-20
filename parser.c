@@ -3,6 +3,7 @@
 #include "file_loader.h"
 #include "status.h"
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "lookup.h"
@@ -93,10 +94,9 @@ static LookupStatus lookup_status = {NO_ERROR, 5};
 
 static StringDynamicArray *string_dynamic_array;
 static StringDynamicArrayPointer status_header;
-static StringDynamicArrayPointer utils_dir;
-static StringDynamicArrayPointer header_dir;
-static StringDynamicArrayPointer struct_template;
 static StringDynamicArrayPointer input_file_name;
+static StringDynamicArrayPointer targets_dir[4];
+static const char *target_dir_fields_name[4] = {"status_header", "utils_dir", "header_dir", "struct_template"};
 
 
 void set_string_dynamic_array(StringDynamicArray *loaded_string_dynamic_array) {
@@ -168,10 +168,7 @@ Token lexer_linear_scan() {
     }
 }
 
-
-
-
-void get_one_line(){
+void get_one_line_error_print() {
     while (head < file_string->length) {
         if (file_string->start[head] == '\n') {
             break;
@@ -188,202 +185,90 @@ void get_one_line(){
     if (tail > 0) {
         tail++;
     };
-}
-
-
-void get_one_line_error_print() {
-    get_one_line();
     printf("%.*s (%s:%ld)\n",head-tail,file_string->start+tail, string_dynamic_array->start_pointer + input_file_name.string_start, line_scanned);
 }
 
+
 Status parser_start() {
-    size_t temp_head = 0;
-    Status scan_status = ITEM_FOUND;
     Token current_token = TOKEN_UNKNOWN;
+    size_t path_pointer, path_length;
+    uint8_t i;
 
-    current_token = lexer_linear_scan();
+    for (i = 0; i<4; i++) {
+        current_token = lexer_linear_scan();
 
-    if (current_token != TOKEN_FIELDS) {
-        printf("Field {%.*s} match up not found at:\n", head-tail,file_string->start+tail);
-        get_one_line_error_print();
-        return lookup_status.status;
-    }
-
-    if (lookup_status.fields_id != STATUS_HEADER) {
-        printf("Wrong fields order {%.*s} at:\n",  head-tail,file_string->start+tail);
-        get_one_line_error_print();
-        printf("\nThe order should be:\n status_header, utils_dir, header_dir, then struct_template");
-        return MISMATCH_EXPECTATION;
-    }
-
-    reset_tail_mode();
-    current_token = lexer_linear_scan();
-
-
-    if (current_token != TOKEN_ASSIGNMENT) {
-        printf("Missing assignment at:\n");
-        get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
-        return MISMATCH_EXPECTATION;
-    }
-
-    reset_tail_mode();
-    current_token = lexer_linear_scan();
-
-    if (current_token != TOKEN_DOUBLE_QUOTE) {
-        printf("Missing double quote at:\n");
-        get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
-        return MISMATCH_EXPECTATION;
-    }
-
-    reset_tail_mode();
-    tail_mode = STRING_LITERAL;
-    current_token = lexer_linear_scan();
-
-    if (current_token != TOKEN_STRING_LITERAL) {
-        printf("Expected string literal at:\n");
-        get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
-        return MISMATCH_EXPECTATION;
-    }
-
-    reset_tail_mode();
-    current_token = lexer_linear_scan();
-
-    if (current_token != TOKEN_SEMICOLON) {
-        printf("Missing semicolon at:\n");
-        get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
-        return MISMATCH_EXPECTATION;
-    }
-
-
-
-    return NO_ERROR;
-}
-
-Status parser_start_old() {
-    size_t temp_head = 0;
-    Status scan_status = ITEM_FOUND;
-
-    lexer_linear_scan();
-
-    if (lookup_status.status == FIELD_MATCH_NOT_FOUND) {
-        printf("Field {%.*s} match up not found at:\n", head-tail,file_string->start+tail);
-        get_one_line_error_print();
-        return lookup_status.status;
-    }
-
-    if (lookup_status.fields_id != STATUS_HEADER) {
-        printf("Wrong fields order {%.*s} at:\n",  head-tail,file_string->start+tail);
-        get_one_line_error_print();
-        printf("\nThe order should be:\n status_header, utils_dir, header_dir, then struct_template");
-        return MISMATCH_EXPECTATION;
-    }
-
-    reset_tail_mode();
-
-    temp_head = head;
-
-
-    while (head < file_string->length) {
-        if (file_string->start[head] == '=') {
-            scan_status = ITEM_FOUND;
-            break;
+        if (current_token != TOKEN_FIELDS) {
+            printf("Field {%.*s} match up not found at:\n", head-tail,file_string->start+tail);
+            get_one_line_error_print();
+            return lookup_status.status;
         }
-        if (type_check(file_string->start[head]) == ALPHANUMERIC ) {
-            scan_status = ITEM_NOT_FOUND;
-            break;
+
+
+        if (lookup_status.fields_id != (GenerateFields) i) {
+            printf("Wrong fields order {%.*s} at:\n",  head-tail,file_string->start+tail);
+            get_one_line_error_print();
+            printf("\nThe order should be:\n status_header, utils_dir, header_dir, then struct_template");
+            return MISMATCH_EXPECTATION;
         }
-        head++;
-    }
 
-    if (scan_status == ITEM_NOT_FOUND) {
-        head = temp_head;
-        printf("Missing assignment at:\n");
-        get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
-    }
-
-    reset_tail_mode();
-
-    temp_head = head;
+        reset_tail_mode();
+        current_token = lexer_linear_scan();
 
 
-    while (head < file_string->length) {
-        if (file_string->start[head] == '"') {
-            scan_status = ITEM_FOUND;
-            break;
+        if (current_token != TOKEN_ASSIGNMENT) {
+            printf("Missing assignment at:\n");
+            get_one_line_error_print();
+            printf("\nIt should be: \n %s = \"{file_path}\"; \n",target_dir_fields_name[i]);
+            return MISMATCH_EXPECTATION;
         }
-        if (type_check(file_string->start[head]) == ALPHANUMERIC ) {
-            scan_status = ITEM_NOT_FOUND;
-            break;
+
+        reset_tail_mode();
+        current_token = lexer_linear_scan();
+
+        if (current_token != TOKEN_DOUBLE_QUOTE) {
+            printf("Missing double quote at:\n");
+            get_one_line_error_print();
+            printf("\nIt should be: \n %s = \"{file_path}\"; \n",target_dir_fields_name[i]);
+            return MISMATCH_EXPECTATION;
         }
-        head++;
-    }
 
-    if (scan_status == ITEM_NOT_FOUND) {
-        head = temp_head;
-        printf("Missing double quote at:\n");
-        get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
-    }
+        reset_tail_mode();
+        tail_mode = STRING_LITERAL;
+        current_token = lexer_linear_scan();
 
-    reset_tail_mode();
-    head++;
+        path_pointer = tail;
+        path_length = head-tail;
 
-    while (head < file_string->length) {
-        if (file_string->start[head] == '"') {
-            scan_status = ITEM_FOUND;
-            break;
+        if (current_token != TOKEN_STRING_LITERAL) {
+            printf("Expected string literal at:\n");
+            get_one_line_error_print();
+            printf("\nIt should be: \n %s = \"{file_path}\"; \n",target_dir_fields_name[i]);
+            return MISMATCH_EXPECTATION;
         }
-        if (type_check(file_string->start[head]) != ALPHANUMERIC || file_string->start[head] == '\n' || file_string->start[head] == ';') {
-            scan_status = ITEM_NOT_FOUND;
-            break;
+
+        reset_tail_mode();
+        reset_tail_mode();
+        current_token = lexer_linear_scan();
+
+        if (current_token != TOKEN_SEMICOLON) {
+            printf("Missing semicolon at:\n");
+            get_one_line_error_print();
+            printf("\nIt should be: \n %s = \"{file_path}\"; \n",target_dir_fields_name[i]);
+            return MISMATCH_EXPECTATION;
         }
-        head++;
-    }
 
-    while (head > tail) {
-        if (file_string->start[head] == '"') {
-            scan_status = ITEM_FOUND;
-            break;
+        targets_dir[i] = insert_string(string_dynamic_array, file_string->start + path_pointer, path_length);
+
+        if (targets_dir[i].status != NO_ERROR) {
+            return targets_dir[i].status;
         }
-        head--;
+
+        reset_tail_mode();
     }
 
-    if (scan_status == ITEM_NOT_FOUND) {
-        head = temp_head;
-        printf("Missing double quote at:\n");
-        get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
+    for (i = 0; i<4; i++) {
+        printf("%*s\n",targets_dir[i].string_length, string_dynamic_array->start_pointer + targets_dir[i].string_start);
     }
-
-    temp_head = head;
-
-    while (head < file_string->length) {
-        if (file_string->start[head] == ';') {
-            scan_status = ITEM_FOUND;
-            break;
-        }
-        if (type_check(file_string->start[head]) == ALPHANUMERIC || file_string->start[head] == '\n') {
-            scan_status = ITEM_NOT_FOUND;
-            break;
-        }
-        head++;
-    }
-
-    if (scan_status == ITEM_NOT_FOUND) {
-        head = temp_head;
-        printf("Missing semicolon at the end\n");
-        get_one_line_error_print();
-        printf("\nIt should be: \n status_header = \"{file_path}\"; \n");
-    }
-
-    header_dir = insert_string(string_dynamic_array, file_string->start + tail, head-tail);
-    printf("%s \n", string_dynamic_array->start_pointer + header_dir.string_start);
-
 
     return NO_ERROR;
 }

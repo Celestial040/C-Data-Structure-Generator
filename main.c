@@ -42,10 +42,10 @@ int main(int argc, char *argv[]) {
     set_file_string(&file_buffer);
 
     parser_status = parser_start();
-/*     if (parser_status != NO_ERROR) {
+    if (parser_status != NO_ERROR) {
         status_print(parser_status);
         return 1;
-    } */
+    }
 
     return 0;
 }
