@@ -1,5 +1,4 @@
-data_structure = 1;
-target_type = "int";
-path_for_header = "include"
-path_for_
-path_to_status_header = "include/status.h";
+status_header  "./include/status";
+utils_dir = "./utils/dynamic_array";
+header_dir = "./include/dynamic_array";
+struct_template = "./struct_template.txt";

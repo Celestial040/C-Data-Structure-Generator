@@ -10,7 +10,8 @@ typedef enum Status {
     FIELD_MATCH_NOT_FOUND,
     ITEM_NOT_FOUND,
     ITEM_FOUND,
-    READ_ERROR
+    READ_ERROR,
+    MISMATCH_EXPECTATION
 } Status;
 
 

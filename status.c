@@ -31,6 +31,9 @@ void status_print(Status status) {
         case READ_ERROR:
             printf("READ_ERROR\n");
             break;
+        case MISMATCH_EXPECTATION:
+            printf("MISMATCH_EXPECTATION\n");
+            break;
         default:
             printf("UNKNOWN_STATUS\n");
             break;

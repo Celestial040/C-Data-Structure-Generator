@@ -91,17 +91,10 @@ void lexer_linear_scan() {
                     match = lookup_key(file_string->start + tail, head-tail);
                     if (match == NULL) {
                         lookup_status.status = FIELD_MATCH_NOT_FOUND;
-                        printf("Field {%.*s} match up not found at ", head-tail,file_string->start+tail);
-                        tail = head;
-                        tail_mode = type_check(file_string->start[tail]);
-                        head++;
                         return;
                     }
                     lookup_status.fields_id = match->id;
-                    tail = head;
-                    tail_mode = type_check(file_string->start[tail]);
-                    head++;
-                    break;;
+                    return;
 
                 case SYMBOL:
                     break;
@@ -123,46 +116,87 @@ void reset_tail_mode() {
 }
 
 Status move_head_forward_until(const char target) {
+    size_t initial_head_index = head;
     while (head < file_string->length) {
         if (file_string->start[head] == target) {
             return ITEM_FOUND;
         }
         head++;
     }
-    return ITEM_FOUND;
+    return ITEM_NOT_FOUND;
 }
 
 Status move_tail_backward_until(const char target) {
+    size_t initial_head_index = head;
     while (tail > 0) {
         if (file_string->start[tail] == target) {
             return ITEM_FOUND;
         }
         tail--;
     }
-    return ITEM_FOUND;
+    return ITEM_NOT_FOUND;
 }
 
 void get_one_line(){
-    move_head_forward_until('\n');
-    move_tail_backward_until('\n');
+    while (head < file_string->length) {
+        if (file_string->start[head] == '\n') {
+            break;
+        }
+        head++;
+    }
+    while (tail > 0) {
+        if (file_string->start[tail] == '\n') {
+            break;
+        }
+        tail--;
+    }
+
     if (tail > 0) {
         tail++;
     };
 }
 
 
-void no_match_error_print() {
+void get_one_line_error_print() {
     get_one_line();
     printf("%.*s (%s:%ld)\n",head-tail,file_string->start+tail, string_dynamic_array->start_pointer + input_file_name.string_start, line_scanned);
 }
 
 Status parser_start() {
+    size_t temp_head = 0;
+    Status scan_status = ITEM_FOUND;
 
     lexer_linear_scan();
+
     if (lookup_status.status == FIELD_MATCH_NOT_FOUND) {
-        no_match_error_print();
+        printf("Field {%.*s} match up not found at:\n", head-tail,file_string->start+tail);
+        get_one_line_error_print();
         return lookup_status.status;
     }
+
+    if (lookup_status.fields_id != STATUS_HEADER) {
+        printf("Wrong fields order {%.*s} at:\n",  head-tail,file_string->start+tail);
+        get_one_line_error_print();
+        printf("\nThe order should be:\n status_header, utils_dir, header_dir, then struct_template");
+        return MISMATCH_EXPECTATION;
+    }
+
+    reset_tail_mode();
+    temp_head = head;
+
+    scan_status = move_head_forward_until('=');
+
+    printf("%ld\n", head);
+
+    if (scan_status == ITEM_NOT_FOUND) {
+        head = temp_head;
+        printf("Missing assignment at:\n");
+        get_one_line_error_print();
+        printf("\nIt should be: \n status_header = \"./include/status\";");
+    }
+
+
+
 
     return NO_ERROR;
 }
