@@ -124,7 +124,7 @@ void set_input_filename(StringDynamicArrayPointer *pointer) {
 
 void reset_tail_mode(FileString *file_string) {
     tail = head;
-    tail_mode = type_check(file_string->start[tail]);
+    tail_mode = head_mode;
     head++;
 }
 

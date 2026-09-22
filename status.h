@@ -1,7 +1,11 @@
 #ifndef STATUS_H
 #define STATUS_H
 
-typedef enum Status {
+#include <stdint.h>
+
+typedef uint8_t Status;
+
+enum {
     NO_ERROR,
     ALLOCATION_ERROR,
     FILE_NOT_FOUND,
@@ -14,7 +18,7 @@ typedef enum Status {
     MISMATCH_EXPECTATION,
     DIGITS_TOO_LONG,
     INTEGER_OVERFLOW
-} Status;
+} ;
 
 
 void status_print(Status status);
