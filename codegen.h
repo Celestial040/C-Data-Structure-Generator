@@ -8,7 +8,7 @@ typedef enum TargetDataStructure {
     DYNAMIC_ARRAY,
     LINKED_LIST,
     HASHMAP,
-    BINARY_TREE,
+    BINARY_TREE
 } TargetDataStructure;
 
 
