@@ -4,7 +4,7 @@
 #include "status.h"
 #include "file_loader.h"
 
-Status read_file(const char *filename, FileString *output) {
+Status load_file_to_memory(const char *filename, FileString *output) {
     FILE *file_pointer;
     char *buffer;
     long length;

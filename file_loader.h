@@ -9,6 +9,6 @@ typedef struct FileString {
     size_t length;
 } FileString;
 
-Status read_file(const char *filename, FileString *output);
+Status load_file_to_memory(const char *filename, FileString *output);
 
 #endif

@@ -2,6 +2,7 @@
 #include "char_manip.h"
 #include "file_loader.h"
 #include <stddef.h>
+#include <stdio.h>
 
 TypeMode type_check(const char target) {
     if (is_alphabet_numeric(target)) {
@@ -50,6 +51,7 @@ TokenPointer lexer_scan(FileString *file_string, size_t *line_count) {
     static TokenPointer tokenpointer = {0,0,TOKEN_UNKNOWN};
 
     while (index < file_string->length) {
+        printf("%ld, %ld\n", trail, index);
         current_mode = type_check(file_string->start[index]);
 
         if (file_string->start[index] == '\n') { *line_count += 1; }
@@ -66,6 +68,7 @@ TokenPointer lexer_scan(FileString *file_string, size_t *line_count) {
             switch (prev_mode) {
 
                 case WHITESPACE:
+
                     if (file_string->start[index] == '"') {
                         current_mode = STRING_LITERAL;
                         index++;
@@ -74,6 +77,7 @@ TokenPointer lexer_scan(FileString *file_string, size_t *line_count) {
                     trail = index;
                     prev_mode = current_mode;
                     index++;
+                    continue;
 
                 case ALPHANUMERIC:
                     tokenpointer.token = TOKEN_IDENTIFIER;
