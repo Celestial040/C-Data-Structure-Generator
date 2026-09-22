@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
     Status allocation_status;
     StringDynamicArrayPointer input_filename_pointer;
 
+
     if (argc != 2) {
         printf("Missing arguments for target file \nprogram-name {target-file} \n \nfor example: \n./program generate.txt\n");
         return 1;

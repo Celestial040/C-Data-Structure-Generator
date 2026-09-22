@@ -34,6 +34,12 @@ void status_print(Status status) {
         case MISMATCH_EXPECTATION:
             printf("MISMATCH_EXPECTATION\n");
             break;
+        case DIGITS_TOO_LONG:
+            printf("DIGITS_TOO_LONG\n");
+            break;
+        case INTEGER_OVERFLOW:
+            printf("INTEGER_OVERFLOW\n");
+            break;
         default:
             printf("UNKNOWN_STATUS\n");
             break;

@@ -22,6 +22,7 @@ typedef enum Token {
     TOKEN_OPEN_CURLY_BRACKET,
     TOKEN_CLOSE_CURLY_BRACKET,
     TOKEN_STRING_LITERAL,
+    TOKEN_NUMERIC_LITERAL,
     TOKEN_EOF,
     TOKEN_UNKNOWN
 }Token;
@@ -147,6 +148,7 @@ Token lexer_scan_generate_file() {
 
             switch (tail_mode) {
                 case WHITESPACE:
+
                     reset_tail_mode(input_file_string);
                     continue;
 
@@ -187,7 +189,6 @@ Token lexer_scan_struct_template() {
     const struct TemplateKeyMapping *match;
     Token token_scanned = TOKEN_UNKNOWN;
 
-
     while (head < struct_template_string.length) {
         head_mode = type_check(struct_template_string.start[head]);
 
@@ -199,7 +200,20 @@ Token lexer_scan_struct_template() {
             head_mode = STRING_LITERAL;
         }
 
+        if (tail_mode == NUMERIC_LITERAL && head_mode == ALPHANUMERIC) {
+            head_mode = NUMERIC_LITERAL;
+        }
+
         if (head_mode != tail_mode) {
+            if (head_mode == ALPHANUMERIC && is_numeric(struct_template_string.start[head])) {
+                head_mode = NUMERIC_LITERAL;
+
+            }
+
+            if (head > 13) {
+                printf("%ld , %ld \n", tail, head);
+                printf("%d , %d \n", tail_mode, head_mode);
+            }
             switch (tail_mode) {
                 case WHITESPACE:
                     reset_tail_mode(&struct_template_string);
@@ -228,7 +242,7 @@ Token lexer_scan_struct_template() {
                     continue;
 
                 case NUMERIC_LITERAL:
-                    break;
+                    return TOKEN_NUMERIC_LITERAL;
             }
         }
 
@@ -395,19 +409,35 @@ Status parse_struct_template() {
         return MISMATCH_EXPECTATION;
     }
 
+/*     printf("%ld, %ld\n", tail, head); */
+    reset_tail_mode(&struct_template_string);
+    current_token = lexer_scan_struct_template();
 
+/*     printf("%ld, %ld\n", tail, head); */
 
+    if (current_token != TOKEN_NUMERIC_LITERAL) {
+        printf("Expected numeric literal at:\n");
+/*         get_one_line_error_print(input_file_string,input_file_name);
+        printf("\nIt should be: \n %s = \"{file_path}\" \n",target_dir_fields_name[i]); */
+        return MISMATCH_EXPECTATION;
+    }
     return NO_ERROR;
 }
 
 Status parser_start() {
     Status parse_result;
+    const char *test_num = "123";
+    char output;
 
     parse_result = parse_generate_file();
-
-
+    if (parse_result != NO_ERROR) {
+        return parse_result;
+    }
 
     parse_result = parse_struct_template();
+    if (parse_result != NO_ERROR) {
+        return parse_result;
+    }
 
     return parse_result;
 }
