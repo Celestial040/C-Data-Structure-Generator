@@ -47,6 +47,14 @@ Status start_scanning_file(const char *filename) {
         return operation_status;
     }
 
+
+    for (; index_location_count < index_location_dynamic_array.count; index_location_count++) {
+        printf("%d, %d \n", index_location_dynamic_array.array[index_location_count].start, index_location_dynamic_array.array[index_location_count].end);
+    }
+
+    index_location_count = 0;
+
+
     start = 0;
     end = index_location_dynamic_array.array[index_location_count].start;
 
@@ -62,17 +70,19 @@ Status start_scanning_file(const char *filename) {
     memcpy(string_dynamic_array.start_pointer+dest_index, replacement_word, replacement_word_length);
 
     dest_index += replacement_word_length;
-    source_index += index_location_dynamic_array.array[index_location_count].end - index_location_dynamic_array.array[index_location_count].start + 1;
+    source_index += target_word_length;
     string_dynamic_array.used += replacement_word_length;
+
+
 
     index_location_count++;
 
 
-    for (; index_location_count < 3; index_location_count++) {
+    for (; index_location_count < index_location_dynamic_array.count; index_location_count++) {
         start = index_location_dynamic_array.array[index_location_count-1].end;
         end = index_location_dynamic_array.array[index_location_count].start;
 
-        step_forward = end-start-1;
+        step_forward = end-start;
 
         memcpy(string_dynamic_array.start_pointer+dest_index, file_string.start+source_index, step_forward);
 
@@ -83,7 +93,7 @@ Status start_scanning_file(const char *filename) {
         memcpy(string_dynamic_array.start_pointer+dest_index, replacement_word, replacement_word_length);
 
         dest_index += replacement_word_length;
-        source_index += index_location_dynamic_array.array[index_location_count].end - index_location_dynamic_array.array[index_location_count].start + 1;
+        source_index += target_word_length;
         string_dynamic_array.used += replacement_word_length;
     }
 

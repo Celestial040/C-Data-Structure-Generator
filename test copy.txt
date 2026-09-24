@@ -1,0 +1,22 @@
+lah awas hati-hati awas awas
+0123456789111111111122222222
+          012345678901234567
+
+
+konklusi apabila dari diatas adalah
+
+start index 0
+4-0 = maka landingnya akan tepat di 4 karena pengurang dan awal lompat sama
+kemudian
+4+target_index = 4 + 4 = 8 tapi last index nya dari 7
+
+jika ditulis maka index nya adalah
+0 4 7 19 22 24 27
+0 4 8 20 24 26 29
+    1     2     3
+
+lah aduh hati-hati aaduhawaduh
+012345678911111111112222222222
+          01234567890123456789
+
+propose solution return index start the length instead of index start and end
