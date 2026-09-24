@@ -1,10 +1,10 @@
-#include "status.h"
+#include "../status.h"
 #include <stddef.h>
 #include <stdlib.h>
-#include "template_dynamic_array.h"
+#include "index_location_dynamic_array.h"
 
-Status allocate_template_dynamic_array(TemplateDynamicArray *array, size_t size_requested) {
-    Template *temp_array = (Template *) malloc(sizeof(Template) *  size_requested);
+Status allocate_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t size_requested) {
+    IndexLocation *temp_array = (IndexLocation *) malloc(sizeof(IndexLocation) *  size_requested);
     if (temp_array == NULL) {
         return ALLOCATION_ERROR;
     }
@@ -16,8 +16,8 @@ Status allocate_template_dynamic_array(TemplateDynamicArray *array, size_t size_
     return NO_ERROR;
 }
 
-Status reallocate_template_dynamic_array(TemplateDynamicArray *array, size_t size_requested) {
-    Template *temp_array = (Template *) realloc(array->array,sizeof(Template) *  size_requested);
+Status reallocate_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t size_requested) {
+    IndexLocation *temp_array = (IndexLocation *) realloc(array->array,sizeof(IndexLocation) *  size_requested);
     if (temp_array == NULL) {
         return ALLOCATION_ERROR;
     }
@@ -28,9 +28,9 @@ Status reallocate_template_dynamic_array(TemplateDynamicArray *array, size_t siz
     return NO_ERROR;
 }
 
-Status insert_item_template_dynamic_array(TemplateDynamicArray *array, Template item) {
+Status insert_item_index_location_dynamic_array(IndexLocationDynamicArray *array, IndexLocation item) {
     if (array->count + 1 >= array->capacity) {
-        Status reallocation_status = reallocate_template_dynamic_array(array, array->capacity * 2);
+        Status reallocation_status = reallocate_index_location_dynamic_array(array, array->capacity * 2);
         if (reallocation_status != NO_ERROR) {
             return reallocation_status;
         }
@@ -42,10 +42,10 @@ Status insert_item_template_dynamic_array(TemplateDynamicArray *array, Template 
     return NO_ERROR;
 }
 
-TemplateDynamicArrayPointer insert_item_return_id_template_dynamic_array(TemplateDynamicArray *array, Template item) {
-    TemplateDynamicArrayPointer returned_index = {NO_ERROR , 0};
+IndexLocationDynamicArrayPointer insert_item_return_id_index_location_dynamic_array(IndexLocationDynamicArray *array, IndexLocation item) {
+    IndexLocationDynamicArrayPointer returned_index = {NO_ERROR , 0};
     if (array->count + 1 >= array->capacity) {
-        Status reallocation_status = reallocate_template_dynamic_array(array, array->capacity * 2);
+        Status reallocation_status = reallocate_index_location_dynamic_array(array, array->capacity * 2);
         if (reallocation_status != NO_ERROR) {
             returned_index.status = reallocation_status;
             return returned_index;
@@ -59,7 +59,7 @@ TemplateDynamicArrayPointer insert_item_return_id_template_dynamic_array(Templat
     return returned_index;
 }
 
-Status get_index_template_dynamic_array(TemplateDynamicArray *array, size_t index, Template *output) {
+Status get_index_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t index, IndexLocation *output) {
     if (index >= array->count) {
         return INDEX_OUT_OF_BOUND;
     }
@@ -68,7 +68,7 @@ Status get_index_template_dynamic_array(TemplateDynamicArray *array, size_t inde
     return NO_ERROR;
 }
 
-Status free_template_dynamic_array(TemplateDynamicArray *array) {
+Status free_index_location_dynamic_array(IndexLocationDynamicArray *array) {
     if (array == NULL || array->array == NULL) {
         return NULL_POINTER;
     }
