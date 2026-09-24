@@ -1,6 +1,7 @@
 CC := gcc
 CFLAGS := -std=c89 -Wpedantic -Wall -Wextra -Werror -O3
-C_FILES := main.c new_parser.c new_lexer.c char_manip.c file_loader.c status.c string_dynamic_array.c
+C_FILES := base_projects/main.c base_projects/new_parser.c base_projects/new_lexer.c base_projects/char_manip.c \
+           base_projects/file_loader.c base_projects/status.c base_projects/string_dynamic_array.c
 
 all:
 	$(CC) $(CFLAGS) $(C_FILES) -o output/program
