@@ -1,10 +1,11 @@
 #include "../status.h"
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include "index_location_dynamic_array.h"
 
 Status allocate_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t size_requested) {
-    IndexLocation *temp_array = (IndexLocation *) malloc(sizeof(IndexLocation) *  size_requested);
+    uint32_t *temp_array = (uint32_t *) malloc(sizeof(uint32_t) *  size_requested);
     if (temp_array == NULL) {
         return ALLOCATION_ERROR;
     }
@@ -17,7 +18,7 @@ Status allocate_index_location_dynamic_array(IndexLocationDynamicArray *array, s
 }
 
 Status reallocate_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t size_requested) {
-    IndexLocation *temp_array = (IndexLocation *) realloc(array->array,sizeof(IndexLocation) *  size_requested);
+    uint32_t *temp_array = (uint32_t *) realloc(array->array,sizeof(uint32_t) *  size_requested);
     if (temp_array == NULL) {
         return ALLOCATION_ERROR;
     }
@@ -28,7 +29,7 @@ Status reallocate_index_location_dynamic_array(IndexLocationDynamicArray *array,
     return NO_ERROR;
 }
 
-Status insert_item_index_location_dynamic_array(IndexLocationDynamicArray *array, IndexLocation item) {
+Status insert_item_index_location_dynamic_array(IndexLocationDynamicArray *array, uint32_t item) {
     if (array->count + 1 >= array->capacity) {
         Status reallocation_status = reallocate_index_location_dynamic_array(array, array->capacity * 2);
         if (reallocation_status != NO_ERROR) {
@@ -42,7 +43,7 @@ Status insert_item_index_location_dynamic_array(IndexLocationDynamicArray *array
     return NO_ERROR;
 }
 
-IndexLocationDynamicArrayPointer insert_item_return_id_index_location_dynamic_array(IndexLocationDynamicArray *array, IndexLocation item) {
+IndexLocationDynamicArrayPointer insert_item_return_id_index_location_dynamic_array(IndexLocationDynamicArray *array, uint32_t item) {
     IndexLocationDynamicArrayPointer returned_index = {NO_ERROR , 0};
     if (array->count + 1 >= array->capacity) {
         Status reallocation_status = reallocate_index_location_dynamic_array(array, array->capacity * 2);
@@ -59,7 +60,7 @@ IndexLocationDynamicArrayPointer insert_item_return_id_index_location_dynamic_ar
     return returned_index;
 }
 
-Status get_index_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t index, IndexLocation *output) {
+Status get_index_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t index, uint32_t *output) {
     if (index >= array->count) {
         return INDEX_OUT_OF_BOUND;
     }

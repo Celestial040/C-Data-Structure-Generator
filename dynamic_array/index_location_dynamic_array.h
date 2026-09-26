@@ -4,13 +4,8 @@
 #include "../status.h"
 #include <stddef.h>
 
-typedef struct IndexLocation {
-    uint32_t start;
-    uint32_t end;
-} IndexLocation;
-
 typedef struct IndexLocationDynamicArray {
-    IndexLocation *array;
+    uint32_t *array;
     size_t count;
     size_t capacity;
 } IndexLocationDynamicArray;
@@ -22,9 +17,9 @@ typedef struct IndexLocationDynamicArrayPointer {
 
 Status allocate_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t size_requested);
 Status reallocate_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t size_requested);
-Status insert_item_index_location_dynamic_array(IndexLocationDynamicArray *array, IndexLocation item);
-IndexLocationDynamicArrayPointer insert_item_return_id_index_location_dynamic_array(IndexLocationDynamicArray *array, IndexLocation item);
-Status get_index_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t index, IndexLocation *output);
+Status insert_item_index_location_dynamic_array(IndexLocationDynamicArray *array, uint32_t item);
+IndexLocationDynamicArrayPointer insert_item_return_id_index_location_dynamic_array(IndexLocationDynamicArray *array, uint32_t item);
+Status get_index_index_location_dynamic_array(IndexLocationDynamicArray *array, size_t index, uint32_t *output);
 Status free_index_location_dynamic_array(IndexLocationDynamicArray *array);
 
 
