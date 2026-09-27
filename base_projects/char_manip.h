@@ -1,7 +1,6 @@
 #ifndef CHAR_MANIP_H
 #define CHAR_MANIP_H
 
-#include "bool.h"
 #include "status.h"
 #include <stddef.h>
 #include <stdint.h>

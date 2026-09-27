@@ -3,7 +3,10 @@
 
 #include "status.h"
 #include <stddef.h>
+#include <stdio.h>
 #include <stdint.h>
+#include <string.h>
+#include "stdbool.h"
 
 typedef struct String {
     char *buffer;
@@ -17,6 +20,7 @@ bool is_numeric(const char target);
 bool is_alphabet_numeric(const char target);
 bool is_whitespace(const char target);
 bool is_it_numeric_literal(const char target);
-Status char_to_uint_64(const char *start, const size_t len, uint64_t *output);
+void decimal_to_hexadecimal(unsigned char input, char *output);
+Status char_to_uint8(const char *start, const size_t len, uint8_t *output);
 
 #endif

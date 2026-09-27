@@ -8,7 +8,7 @@ SCANNER_FILES := scanner/main.c scanner/status.c scanner/file_loader.c scanner/c
 				 scanner/dynamic_array/string_dynamic_array.c scanner/dynamic_array/index_location_dynamic_array.c \
 				 scanner/string_match_scan.c
 
-DECIMAL_HEX_FILES := main.c status.c char_manip.c decimal_to_hex.c
+DECIMAL_HEX_FILES := main.c status.c char_manip.c
 
 all:
 	$(CC) $(CFLAGS) $(C_FILES) -o output/program
