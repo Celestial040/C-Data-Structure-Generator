@@ -8,6 +8,8 @@ SCANNER_FILES := scanner/main.c scanner/status.c scanner/file_loader.c scanner/c
 				 scanner/dynamic_array/string_dynamic_array.c scanner/dynamic_array/index_location_dynamic_array.c \
 				 scanner/string_match_scan.c
 
+DECIMAL_HEX_FILES := main.c status.c char_manip.c decimal_to_hex.c
+
 all:
 	$(CC) $(CFLAGS) $(C_FILES) -o output/program
 test:
@@ -19,3 +21,6 @@ gperf_gen:
 
 test_scanner:
 	$(CC) $(TEST_CFLAGS) $(SCANNER_FILES) -o ./output/scanner
+
+decimalhex:
+	$(CC) $(TEST_CFLAGS) $(DECIMAL_HEX_FILES) -o ./output/decimalhex
